@@ -1,0 +1,44 @@
+{
+  "4": {
+    "translation (1,0)": {
+      "residual": 0.09406344,
+      "n_pairs": 60
+    },
+    "translation (2,1)": {
+      "residual": 0.1444144,
+      "n_pairs": 4
+    },
+    "quarter-turn about corner": {
+      "residual": 0.1096217,
+      "n_pairs": 49
+    }
+  },
+  "5": {
+    "translation (1,0)": {
+      "residual": 0.086339,
+      "n_pairs": 36
+    },
+    "translation (2,1)": {
+      "residual": null,
+      "n_pairs": 0
+    },
+    "quarter-turn about corner": {
+      "residual": 0.09610718,
+      "n_pairs": 36
+    }
+  },
+  "6": {
+    "translation (1,0)": {
+      "residual": 0.0,
+      "n_pairs": 12
+    },
+    "translation (2,1)": {
+      "residual": null,
+      "n_pairs": 0
+    },
+    "quarter-turn about corner": {
+      "residual": 1.066205e-15,
+      "n_pairs": 25
+    }
+  }
+}
