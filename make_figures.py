@@ -77,26 +77,56 @@ def curves():
 
 def nonlin_fig():
     sizes = np.array(R["sizes"])
-    fig, ax = plt.subplots(figsize=(4.9, 3.6))
+    fig, ax = plt.subplots(figsize=(6.0, 4.4))
+
     for name in ["GEQ", "GEQ-nl", "CNN-6", "CNN-6-nl"]:
         res = R["results"]["nine"].get(name, {})
         if not all(str(n) in res for n in sizes):
             continue
+
         med = [res[str(n)]["median"] for n in sizes]
         q25 = [res[str(n)]["q25"] for n in sizes]
         q75 = [res[str(n)]["q75"] for n in sizes]
         fmt, c = STYLE[name]
-        ax.loglog(sizes, med, fmt, color=c, ms=4,
-                  label=f"{name} ({R['params'][name]})")
+
+        ax.loglog(
+            sizes, med, fmt,
+            color=c,
+            ms=4,
+            label=f"{name} ({R['params'][name]})"
+        )
         ax.fill_between(sizes, q25, q75, color=c, alpha=0.13)
+
     ax.set_xlabel("training fields")
     ax.set_ylabel("relative test MSE")
     ax.set_title("nonlinear round, nine-point task", fontsize=10)
     ax.grid(True, which="both", alpha=0.3)
-    ax.legend(fontsize=7.5)
+
+    # Mostrar únicamente los tamaños realmente usados
+    ax.set_xticks(sizes)
+    ax.set_xticklabels([str(s) for s in sizes])
+    ax.xaxis.set_minor_locator(ticker.NullLocator())
+    ax.xaxis.set_minor_formatter(ticker.NullFormatter())
+
+    # Leyenda fuera del gráfico
+    ax.legend(
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.18),
+        ncol=2,
+        fontsize=7.5,
+        frameon=False
+    )
+
     fig.tight_layout()
-    fig.savefig(OUT / "poisson_nonlinear_round.pdf")
-    fig.savefig(OUT / "poisson_nonlinear_round.png", dpi=170)
+    fig.savefig(
+        OUT / "poisson_nonlinear_round.pdf",
+        bbox_inches="tight"
+    )
+    fig.savefig(
+        OUT / "poisson_nonlinear_round.png",
+        dpi=170,
+        bbox_inches="tight"
+    )
 
 
 def fmt_ms(d):
