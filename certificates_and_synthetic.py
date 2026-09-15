@@ -304,25 +304,83 @@ def make_figures(payload, outdir: Path):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    from matplotlib import ticker
 
     syn = payload["synthetic_recovery"]
     sizes = np.array(syn["sizes"])
-    fig, ax = plt.subplots(figsize=(5.4, 3.7))
-    markers = {"GEQ": "o", "GEQ-noX": "s", "GEQ-noCorner": "^", "UNC": "d"}
+
+    fig, ax = plt.subplots(figsize=(6.0, 4.4))
+
+    markers = {
+        "GEQ": "o",
+        "GEQ-noX": "s",
+        "GEQ-noCorner": "^",
+        "UNC": "d"
+    }
+
     for name in ["GEQ", "GEQ-noX", "GEQ-noCorner", "UNC"]:
-        med = np.maximum(np.array(syn["errors"][name]["median"]), 1e-16)
-        q25 = np.maximum(np.array(syn["errors"][name]["q25"]), 1e-16)
-        q75 = np.maximum(np.array(syn["errors"][name]["q75"]), 1e-16)
-        line, = ax.loglog(sizes, med, marker=markers[name], label=f"{name} ({syn['parameters'][name]} par.)")
-        ax.fill_between(sizes, q25, q75, alpha=0.16, color=line.get_color())
+        med = np.maximum(
+            np.array(syn["errors"][name]["median"]),
+            1e-16
+        )
+        q25 = np.maximum(
+            np.array(syn["errors"][name]["q25"]),
+            1e-16
+        )
+        q75 = np.maximum(
+            np.array(syn["errors"][name]["q75"]),
+            1e-16
+        )
+
+        line, = ax.loglog(
+            sizes,
+            med,
+            marker=markers[name],
+            ms=4,
+            label=f"{name} ({syn['parameters'][name]} par.)"
+        )
+
+        ax.fill_between(
+            sizes,
+            q25,
+            q75,
+            alpha=0.16,
+            color=line.get_color()
+        )
+
     ax.set_xlabel("scalar training probes")
     ax.set_ylabel("relative operator error")
-    ax.set_title("Recovery of a random complete GEQ layer")
+    ax.set_title("Recovery of a random complete GEQ layer", fontsize=10)
     ax.grid(True, which="both", alpha=0.3)
-    ax.legend(fontsize=8)
+
+    # Solo mostrar los tamaños usados
+    ax.set_xticks(sizes)
+    ax.set_xticklabels([str(s) for s in sizes])
+    ax.xaxis.set_minor_locator(ticker.NullLocator())
+    ax.xaxis.set_minor_formatter(ticker.NullFormatter())
+
+    # Leyenda fuera de la gráfica
+    ax.legend(
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.18),
+        ncol=2,
+        fontsize=7.5,
+        frameon=False
+    )
+
     fig.tight_layout()
-    fig.savefig(outdir / "synthetic_geq_recovery.pdf")
-    fig.savefig(outdir / "synthetic_geq_recovery.png", dpi=180)
+
+    fig.savefig(
+        outdir / "synthetic_geq_recovery.pdf",
+        bbox_inches="tight"
+    )
+
+    fig.savefig(
+        outdir / "synthetic_geq_recovery.png",
+        dpi=180,
+        bbox_inches="tight"
+    )
+
     plt.close(fig)
 
 
