@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import numpy as np
 import matplotlib
+from matplotlib import ticker
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -27,27 +28,51 @@ TITLES = {"five": "five-point (corner-insensitive)",
 
 def curves():
     sizes = np.array(R["sizes"])
-    fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.8), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(11.2, 4.6), sharey=True)
+
     for ax, task in zip(axes, ["five", "nine"]):
         for name in CURVE:
             res = R["results"][task].get(name, {})
             if not all(str(n) in res for n in sizes):
                 continue
+
             med = [res[str(n)]["median"] for n in sizes]
             q25 = [res[str(n)]["q25"] for n in sizes]
             q75 = [res[str(n)]["q75"] for n in sizes]
             fmt, c = STYLE[name]
-            ax.loglog(sizes, med, fmt, color=c, ms=4,
-                      label=f"{name} ({R['params'][name]})")
+
+            ax.loglog(
+                sizes, med, fmt, color=c, ms=4,
+                label=f"{name} ({R['params'][name]})"
+            )
             ax.fill_between(sizes, q25, q75, color=c, alpha=0.13)
+
         ax.set_xlabel("training fields")
         ax.set_title(TITLES[task], fontsize=10)
         ax.grid(True, which="both", alpha=0.3)
+
+        # Solo mostrar 25, 100 y 400 en el eje x para que no se solapen
+        ax.set_xticks(sizes)
+        ax.set_xticklabels([str(s) for s in sizes])
+        ax.xaxis.set_minor_locator(ticker.NullLocator())
+        ax.xaxis.set_minor_formatter(ticker.NullFormatter())
+
     axes[0].set_ylabel("relative test MSE")
-    axes[0].legend(fontsize=6.8, ncol=2)
-    fig.tight_layout()
-    fig.savefig(OUT / "poisson_definitive_curves.pdf")
-    fig.savefig(OUT / "poisson_definitive_curves.png", dpi=170)
+
+    # Leyenda fuera de los paneles, abajo
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(
+        handles, labels,
+        loc="lower center",
+        bbox_to_anchor=(0.5, -0.02),
+        ncol=4,
+        fontsize=7,
+        frameon=False
+    )
+
+    fig.tight_layout(rect=[0, 0.12, 1, 1])
+    fig.savefig(OUT / "poisson_definitive_curves.pdf", bbox_inches="tight")
+    fig.savefig(OUT / "poisson_definitive_curves.png", dpi=170, bbox_inches="tight")
 
 
 def nonlin_fig():
