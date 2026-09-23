@@ -180,4 +180,10 @@ This separation lets reviewers immediately regenerate figures from the reported 
 
 ## Citation
 
-Please cite the accompanying manuscript. Replace this section with the final journal or arXiv citation once available.
+### 📄 Preprint
+
+**A. Ibort, M. Jimenez-Vazquez, and J. M. Perez-Pardo.**
+*Theory for groupoid equivariant neural networks: an approach for steerable CNNs on bounded domains.*
+arXiv:2609.25987 [cs.LG], 2026.
+https://arxiv.org/abs/2609.25987
+
